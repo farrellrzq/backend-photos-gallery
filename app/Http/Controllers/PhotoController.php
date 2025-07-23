@@ -72,6 +72,13 @@ class PhotoController extends Controller
 
     public function download(Photo $photo)
     {
-        return response()->download(storage_path("app/public/{$photo->image_path}"));
+        // Pastikan hanya file yang ada di storage yang diambil
+        $path = storage_path('app/public/' . $photo->image_path);
+
+        if (!file_exists($path)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+
+        return response()->download($path, basename($photo->image_path));
     }
 }
